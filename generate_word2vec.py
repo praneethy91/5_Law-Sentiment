@@ -41,5 +41,5 @@ model.save("word2vec_model")
 '''
 Usage:
 model=Word2Vec.load('word2vec_model')
-model.wv.similarity('man','woman')
+model.similarity('man','woman')
 '''
