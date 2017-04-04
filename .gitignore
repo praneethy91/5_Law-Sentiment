@@ -10,6 +10,8 @@ __pycache__/
 .Python
 env/
 build/
+.idea/
+.idea/vcs.xml
 data/
 develop-eggs/
 dist/
