@@ -8,7 +8,7 @@ import numpy as np
 
 # reload(sys)
 # sys.setdefaultencoding('utf8')
-model = Word2Vec.load('word2vec_model_cleaned_data')
+model = Word2Vec.load('w2vmodel_run/word2vec_model_cleaned_data')
 thermometeres = ['democrats', 'republicans', 'protestants', 'catholics', 'jews', 'blacks', 'whites', 'southerners',
                  'big business', 'labor unions', 'liberals', 'conservatives', 'military', 'policemen',
                  'black militants', 'civil rights leaders', 'chicanos hispanics', 'democratic party',
