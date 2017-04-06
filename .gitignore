@@ -13,6 +13,7 @@ build/
 .idea/
 .idea/vcs.xml
 data/
+w2vmodel_run/
 develop-eggs/
 dist/
 downloads/
