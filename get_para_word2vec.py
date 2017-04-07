@@ -17,12 +17,13 @@ thermometeres = ['democrats', 'republicans', 'protestants', 'catholics', 'jews',
                  'environmentalists', 'anti abortionists', 'federal government', 'illegal aliens',
                  'christian fundamentalists', 'radical students', 'farmers', 'feminists', 'evangelical groups',
                  'elderly', 'supreme court', 'women']
-all_w2v = {}
+
 list_of_dirs = os.listdir('/scratch/bsg348-share/MLCS/data/clean_Mar_20')
 for directory in list_of_dirs:
     if not directory.endswith('zip'):
         files = os.listdir('/scratch/bsg348-share/MLCS/data/clean_Mar_20/' + directory + '/maj')
         print(directory)
+        os.makedirs("similarities/"+directory)
         for file_name in files:
             new_file_name = '/scratch/bsg348-share/MLCS/data/clean_Mar_20/' + directory + '/maj/' + file_name
             therm_param = []
@@ -47,9 +48,11 @@ for directory in list_of_dirs:
                             therm_param[index]=therm_param[index]+current_similarity/len(split_therm)
                     therm_param/=len(words)
                     current_file_therm_para.append(therm_param)
-                all_w2v[new_file_name]=current_file_therm_para
+                
+                
+                pickle.dump( current_file_therm_para, open( "similarities/"+directory+"/"+file_name, "wb" ) )
 
-pickle.dump( all_w2v, open( "para_similarity.p", "wb" ) )
+#pickle.dump( all_w2v, open( "para_similarity.p", "wb" ) )
 
 
 
