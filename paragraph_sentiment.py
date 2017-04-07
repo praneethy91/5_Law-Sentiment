@@ -16,12 +16,16 @@ from pycorenlp import StanfordCoreNLP
 import pickle
 import os
 
-all_paraSent = {}
+#all_paraSent = {}
 list_of_dirs = os.listdir('/scratch/bsg348-share/MLCS/data/clean_Mar_20')
 for directory in list_of_dirs:
     if not directory.endswith('zip'):
         files = os.listdir('/scratch/bsg348-share/MLCS/data/clean_Mar_20/' + directory + '/maj')
         print(directory)
+        if not os.path.exists("sentiment"):
+            os.makedirs("sentiment")
+            if not os.path.exists("sentiment/" + directory):
+                os.makedirs("sentiment/" + directory)
         for file_name in files:
             new_file_name = '/scratch/bsg348-share/MLCS/data/clean_Mar_20/' + directory + '/maj/' + file_name
             with open(new_file_name, mode='rb') as f_obj:
@@ -56,6 +60,7 @@ for directory in list_of_dirs:
                     '''
                     print(sentiment)
                     '''
-                all_paraSent[new_file_name] = curr_file_allPara_sent
+                pickle.dump(curr_file_allPara_sent, open("sentiment/" + directory + "/" + file_name, "wb"))
+                #all_paraSent[new_file_name] = curr_file_allPara_sent
 
-pickle.dump( all_paraSent, open( "para_sentiment.p", "wb" ) )
+#pickle.dump( all_paraSent, open( "para_sentiment.p", "wb" ) )
