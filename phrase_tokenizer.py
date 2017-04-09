@@ -6,13 +6,27 @@ Created on Wed Oct 19 12:06:40 2016
 """
 
 from numpy import prod
-from collections import Counter
+from collections import Counter, Set
 from nltk import sent_tokenize,ngrams,PorterStemmer,SnowballStemmer,WordNetLemmatizer
 from nltk.tag import perceptron
+import utils
+import phrase_similarity
+import numpy as np
+import pickle
+
 tagger = perceptron.PerceptronTagger()
 porter = PorterStemmer()
 snowball = SnowballStemmer('english')
 lemmatizer = WordNetLemmatizer()
+
+thermometers = ['democrats', 'republicans', 'protestants', 'catholics', 'jews', 'blacks', 'whites', 'southerners',
+                 'big business', 'labor unions', 'liberals', 'conservatives', 'military', 'policemen',
+                 'black militants', 'civil rights leaders', 'chicanos hispanics', 'democratic party',
+                 'middle class people', 'people on welfare', 'political independents', 'political parties',
+                 'poor people', 'republican party', 'womens right activist', 'young people', 'asian-americans', 'congress',
+                 'environmentalists', 'anti abortionists', 'federal government', 'illegal aliens',
+                 'christian fundamentalists', 'radical students', 'farmers', 'feminists', 'evangelical groups',
+                 'elderly', 'supreme court', 'women']
 
 def word_normalize(word,stemmer=None):
     w = word.lower()
@@ -83,43 +97,57 @@ def gmean(phrase, termfreqs):
     pg = termfreqs[phrase]    
     return pg / (prod(p) ** (1/n))
 
-def train_phraser(documents, max_phrase_length=4, stemmer=None, vocab=None,
+def train_phraser(max_phrase_length=3, stemmer=None, vocab=None,
                             min_doc_freq=None, min_gmean=None):    
     # take documents and get POS-gram dictionary
     
-    numdocs = len(documents)
-    if min_doc_freq is None:
-        min_doc_freq = round(numdocs / 200) + 1
-
+    numdocs = 0
     docfreqs = Counter()
-    termfreqs = Counter()        
-    
-    for document in documents:
-        docgrams = set()
-        # split into sentences
-        sentences = sent_tokenize(document)
-        for sentence in sentences:     
-            # split into words and get POS tags
-            words = sentence.split()
-            tagwords = tagsentence(words,stemmer,vocab)        
-            for n in range(1,max_phrase_length+1):            
-                rawgrams = ngrams(tagwords,n)
-                for rawgram in rawgrams:
-                    # skip grams that have words not in vocab
-                    if None in rawgram:
-                        continue
-                    gramtags = ''.join([x[1][0] for x in rawgram])
-                    if gramtags in tagpatterns:
-                         # if tag sequence is allowed, add to counter
-                        gram = '_'.join([x[0] for x in rawgram])
-                        termfreqs[gram] += 1
-                        docgrams.add(gram)                                    
-        docfreqs.update(docgrams)
+    termfreqs = Counter()
+
+    root_Directory = 'data/clean_Mar_20'
+    list_of_dirs = utils.getDirectoryList(root_Directory)
+    for directory in list_of_dirs:
+        if not directory.endswith('zip'):
+            print(directory)
+            utils.createDirectory("similarities")
+            utils.createDirectory("similarities/" + directory)
+
+            files = utils.getFilesListFromDir(directory)
+            for file_name in files:
+                para_list = utils.getParaListFromFile(file_name, directory)
+                for para in para_list:
+
+                    numdocs += 1
+
+                    docgrams = set()
+                    # split into sentences
+                    sentences = sent_tokenize(para)
+                    for sentence in sentences:
+                        # split into words and get POS tags
+                        words = sentence.split()
+                        tagwords = tagsentence(words, stemmer, vocab)
+                        for n in range(1, max_phrase_length + 1):
+                            rawgrams = ngrams(tagwords, n)
+                            for rawgram in rawgrams:
+                                # skip grams that have words not in vocab
+                                if None in rawgram:
+                                    continue
+                                gramtags = ''.join([x[1][0] for x in rawgram])
+                                if gramtags in tagpatterns:
+                                    # if tag sequence is allowed, add to counter
+                                    gram = '_'.join([x[0] for x in rawgram])
+                                    termfreqs[gram] += 1
+                                    docgrams.add(gram)
+                    docfreqs.update(docgrams)
         
     # filter vocabulary based on document frequency and make gram ids
     gram2id = {}
     id2gram = {}
-       
+
+    if min_doc_freq is None:
+        min_doc_freq = round(numdocs / 200) + 1
+
     i = 0
     for (phrase,v) in docfreqs.most_common():   
         if v < min_doc_freq:
@@ -137,7 +165,7 @@ def train_phraser(documents, max_phrase_length=4, stemmer=None, vocab=None,
     
     return gram2id, id2gram
 
-def apply_phraser(words, gram2id, max_phrase_length=4):
+def apply_phraser(words, gram2id, max_phrase_length=3):
     """"apply phraser method to sentence."
          Input should be list of lower-case (stemmed) words"""
     sentlength = len(words)
@@ -162,18 +190,43 @@ def apply_phraser(words, gram2id, max_phrase_length=4):
                 break
     return new_s
 
-test = True
-if test:
-    documents = ['This is a test document sentence. This is the second sentence.',
-             'This is a second test document.',
-             'Beyond a reasonable doubt.']
+'''
+documents = ['This is a test document sentence. This is the second sentence.',
+         'This is a second test document.',
+         'Beyond a reasonable doubt.']
+'''
 
-    phrase2id, id2phrase = train_phraser(documents)
-    
-    for document in documents:        
-        sentences = sent_tokenize(document)
-        for sentence in sentences:     
-            # split into words and get POS tags
-            words = [w.lower() for w in sentence.split()]
-            phraseids = apply_phraser(words,phrase2id)
-            print([id2phrase[p] for p in phraseids])
+root_Directory = 'data/clean_Mar_20'
+list_of_dirs = utils.getDirectoryList(root_Directory)
+
+# Training the phraser
+phrase2id, id2phrase = train_phraser()
+
+# Phrase vector of the thermometers
+thermometer_vector = [phrase_similarity.PhraseVector(thermometer) for thermometer in thermometers]
+
+# Getting data from the phraser
+for directory in list_of_dirs:
+    if not directory.endswith('zip'):
+        print(directory)
+        utils.createDirectory("similarities")
+        utils.createDirectory("similarities/" + directory)
+
+        files = utils.getFilesListFromDir(directory)
+        for file_name in files:
+            para_list = utils.getParaListFromFile(file_name, directory)
+            caseLevelParaSimilarityVectorsCombined = []
+            for para in para_list:
+                set_vector = set()
+                sentences = sent_tokenize(para)
+                for sentence in sentences:
+                    # split into words and get POS tags
+                    words = [w.lower() for w in sentence.split()]
+                    phraseids = apply_phraser(words, phrase2id)
+
+                    for phraseId in phraseids:
+                        set_vector.add(np.array([thermometer.CosineSimilarity(phrase_similarity.PhraseVector(id2phrase[phraseId])) for thermometer in thermometer_vector]))
+
+                paraLevelSimilarityVector = np.mean(set_vector, axis=0)
+                caseLevelParaSimilarityVectorsCombined.append(paraLevelSimilarityVector)
+            pickle.dump(caseLevelParaSimilarityVectorsCombined, open("similarities/" + directory + "/" + file_name, "wb"))
