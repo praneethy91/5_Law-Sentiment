@@ -63,7 +63,10 @@ def getParaSentimentList(para_list):
             sentence_sentiment = s["sentimentValue"]
             para_sentiment += int(sentence_sentiment) - 2
             sentence_count += 1
-        avgParaSentimentList.append(para_sentiment/sentence_count)
+        if(sentence_count == 0):
+            avgParaSentimentList.append(0)
+        else:
+            avgParaSentimentList.append(para_sentiment/sentence_count)
         sentiment = 1 if para_sentiment > 0 else (-1 if para_sentiment < 0 else 0)
         paraSentimentList.append(sentiment)
     return avgParaSentimentList, paraSentimentList
