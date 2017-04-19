@@ -1,9 +1,9 @@
-##sbatch run_task_HPC_background.sh (to run the script)
-##scancel jobId to stop the job
-
 #!/bin/bash
 # This line tells the shell how to execute this script, and is unrelated
 # to SLURM.
+#sbatch run_task_HPC_background.sh (to run the script)
+#scancel jobId to stop the job
+
 
 # at the beginning of the script, lines beginning with "#SBATCH" are read by
 # SLURM and used to set queueing options. You can comment out a SBATCH
