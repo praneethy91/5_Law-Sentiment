@@ -14,12 +14,14 @@ from pycorenlp import StanfordCoreNLP
 import utils as util
 import sys
 import codecs
+import time
+
 if sys.stdout.encoding != 'cp850':
   sys.stdout = codecs.getwriter('cp850')(sys.stdout.buffer, 'strict')
 if sys.stderr.encoding != 'cp850':
   sys.stderr = codecs.getwriter('cp850')(sys.stderr.buffer, 'strict')
 
-demo = False
+demo = True
 demo_local = False
 
 def getNLPServer():
@@ -49,6 +51,7 @@ def getParaSentimentList(para_list):
     nlp = getNLPServer()
     avgParaSentimentList = []
     paraSentimentList = []
+    start = time.time()
     for para in para_list:
 
         res = getNLPServerResponse(nlp,para)
@@ -69,6 +72,8 @@ def getParaSentimentList(para_list):
             avgParaSentimentList.append(para_sentiment/sentence_count)
         sentiment = 1 if para_sentiment > 0 else (-1 if para_sentiment < 0 else 0)
         paraSentimentList.append(sentiment)
+    end = time.time()
+    print(end - start)
     return avgParaSentimentList, paraSentimentList
 
 
@@ -101,6 +106,7 @@ def main():
         avgParaSentimentList, paraSentimentList = getParaSentimentList(para_list)
         print(avgParaSentimentList)
         print(paraSentimentList)
+
 
 if __name__ == "__main__":
     main()
