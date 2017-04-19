@@ -31,7 +31,8 @@ maj_dir = 'maj/'
 similarities_output_dir = "similarities/"
 
 # Converting thermometers to vectors
-
+previous_files=os.listdir("/home/bsg348/DATA_STORE")
+print(previous_files)
 thermometer_vectors = np.zeros((len(thermometeres), word2Vec_dimension))
 i = 0
 for thermometer in thermometeres:
@@ -46,10 +47,10 @@ start_time = time.time()
 list_of_dirs = os.listdir(case_dir)
 
 for directory in list_of_dirs:
-    if not directory.endswith('zip'):
-
+    if not directory in previous_files:
+        print(directory)
         files = os.listdir(case_dir + directory + '/' + maj_dir)
-        os.makedirs(similarities_output_dir + directory, exist_ok=True)
+        os.makedirs("/home/bsg348/DATA_STORE/" + directory, exist_ok=True)
 
         for file_name in files:
             absolute_file_path = case_dir + directory + '/' + maj_dir +  file_name
@@ -92,7 +93,7 @@ for directory in list_of_dirs:
 
                     current_file_therm_para.append(similarity_vector)
 
-                pickle.dump(current_file_therm_para, open(similarities_output_dir + directory + "/" + file_name, "wb"))
+                pickle.dump(current_file_therm_para, open("/home/bsg348/DATA_STORE/" + directory + "/" + file_name, "wb"))
 
 end_time = time.time()
 print(end_time - start_time)
