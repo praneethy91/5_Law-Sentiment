@@ -1,3 +1,6 @@
+##sbatch run_task_HPC_background.sh (to run the script)
+##scancel jobId to stop the job
+
 #!/bin/bash
 # This line tells the shell how to execute this script, and is unrelated
 # to SLURM.
@@ -40,11 +43,8 @@
 
 # first we ensure a clean running environment:
 
+
 module purge
-module load jdk/1.8.0_111
 module load python3/intel/3.5.3
 module load nltk/3.2.2
-java -mx5g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -timeout 10000000000000000000000 > NLP-server2.log 2>&1 &
-
-sleep 20;
-python3 paragraph_sentiment.py
+python3 paragraph_sentiment_vader.py

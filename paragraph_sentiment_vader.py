@@ -26,6 +26,7 @@ if sys.stderr.encoding != 'cp850':
 demo = False
 demo_local = False
 sid = SentimentIntensityAnalyzer()
+outDir = "/home/nk2239/VADER_DATA_STORE"
 
 def getParaSentimentList(para_list):
     avgParaSentimentList = []
@@ -60,6 +61,8 @@ def main():
     if(not demo):
         root_Directory = 'data/clean_Mar_20'
         if(demo_local):
+            global outDir
+            outDir = "VADER_sentiment"
             root_Directory = '../../Data/clean_Mar_20'
         list_of_dirs = util.getDirectoryList(root_Directory)
         for directory in list_of_dirs:
@@ -67,15 +70,15 @@ def main():
                 year = int(directory)
                 if year >= 1964:
                     print(directory)
-                    util.createDirectory("sentiment")
-                    util.createDirectory("sentiment/" + directory)
+                    util.createDirectory(outDir)
+                    util.createDirectory(outDir + "/"+ directory)
 
                     files = util.getFilesListFromDir(directory)
                     for file_name in files:
                         para_list = util.getParaListFromFile(file_name, directory)
                         avgParaSentimentList, paraSentimentList = getParaSentimentList(para_list)
-                        util.writeToPickle(paraSentimentList, "sentiment", directory, file_name, avg=False)
-                        util.writeToPickle(avgParaSentimentList, "sentiment", directory, file_name, avg=True)
+                        util.writeToPickle(paraSentimentList, outDir, directory, file_name, avg=False)
+                        util.writeToPickle(avgParaSentimentList, outDir, directory, file_name, avg=True)
     else:
         para_list = [
             "DRUMMOND, C. J. The schooner American was at Oswego in the fall of 1872, and took in a cargo of coal for Chicago, leaving Oswego on the tenth of November. A general bill of lading was given, and a high price charged for the transportation of the coal from Oswego to Chicago, being $2.75 per ton. The schooner met with adverse winds and did not arrive at Port Huron until November 29th. The weather, according to the testimony of the witnesses, was very inclement that fall, and the captain concluded that the safest course was to strip the vessel and lay up at Port Huron. The schooner accordingly remained there with her cargo during the winter, and the coal was not delivered in Chicago or received by the consignees until May 8, 1873, when the spring freight was paid by the consignees on the coal, being much less than that charged in the bill of lading. After the coal had been thus delivered by the schooner to the consignees, a libel was filed claiming the amount of freight stated in the bill of lading, the consignees having refused to pay any more than the spring price of freight. The case went to proof before the district court, where the libel was dismissed; but a cross-libel having been filed claiming that the captain of the American was negligent in wintering at Port Hur on, and that the vessel should have come on in the fall of 1872, the district court gave a decree on the cross-libel for damages against the libelants in consequence of the supposed negligence of the captain. From t hese decrees the libelants have appealed to this court, and the question is whether the decrees of the district court are right.",
