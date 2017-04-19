@@ -1,13 +1,13 @@
-from gensim.models.word2vec import Word2Vec
 import os
-from glob import glob
-from zipfile import ZipFile
-import sys
 import pickle
+
 import numpy as np
+import time
+from gensim.models.word2vec import Word2Vec
 
 # reload(sys)
 # sys.setdefaultencoding('utf8')
+
 model = Word2Vec.load('w2vmodel_run/word2vec_model_cleaned_data')
 thermometeres = ['democrats', 'republicans', 'protestants', 'catholics', 'jews', 'blacks', 'whites', 'southerners',
                  'big business', 'labor unions', 'liberals', 'conservatives', 'military', 'policemen',
@@ -18,14 +18,15 @@ thermometeres = ['democrats', 'republicans', 'protestants', 'catholics', 'jews',
                  'christian fundamentalists', 'radical students', 'farmers', 'feminists', 'evangelical groups',
                  'elderly', 'supreme court', 'women']
 
-list_of_dirs = os.listdir('/scratch/bsg348-share/MLCS/data/clean_Mar_20')
+start_time = time.time()
+list_of_dirs = os.listdir('data/clean_Mar_20')
 for directory in list_of_dirs:
     if not directory.endswith('zip'):
-        files = os.listdir('/scratch/bsg348-share/MLCS/data/clean_Mar_20/' + directory + '/maj')
+        files = ['data/clean_Mar_20/1964_new/maj/X2NCO1-maj.p']
         print(directory)
-        os.makedirs("similarities/"+directory)
+        os.makedirs("similarities/"+directory, exist_ok=True)
         for file_name in files:
-            new_file_name = '/scratch/bsg348-share/MLCS/data/clean_Mar_20/' + directory + '/maj/' + file_name
+            new_file_name = file_name
             therm_param = []
             with open(new_file_name, mode='rb') as f_obj:
                 test = pickle.load(f_obj)
@@ -48,14 +49,13 @@ for directory in list_of_dirs:
                             therm_param[index]=therm_param[index]+current_similarity/len(split_therm)
                     therm_param/=len(words)
                     current_file_therm_para.append(therm_param)
-                
-                
-                pickle.dump( current_file_therm_para, open( "similarities/"+directory+"/"+file_name, "wb" ) )
+
+                pickle.dump( current_file_therm_para, open( "similarities/"+directory+"/"+'X2NCO1-maj', "wb" ) )
+
+end_time = time.time()
+print(end_time - start_time)
 
 #pickle.dump( all_w2v, open( "para_similarity.p", "wb" ) )
-
-
-
 # output_para_word_vec.append(current_file_word_vec)
 
 
