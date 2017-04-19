@@ -18,6 +18,21 @@ thermometeres = ['democrats', 'republicans', 'protestants', 'catholics', 'jews',
                  'christian fundamentalists', 'radical students', 'farmers', 'feminists', 'evangelical groups',
                  'elderly', 'supreme court', 'women']
 
+# Wrod2Vec size
+word2Vec_dimension = 100
+
+# Converting thermometers to vectors
+
+thermometer_vectors = np.zeros((len(thermometeres), word2Vec_dimension))
+i = 0
+for thermometer in thermometeres:
+    words = thermometer.split()
+    word2vector = np.zeros(word2Vec_dimension)
+    for word in words:
+        word2vector += model.wv[word]
+    thermometer_vectors[i, :] = word2vector/len(words)
+    i += 1
+
 start_time = time.time()
 list_of_dirs = os.listdir('data/clean_Mar_20')
 for directory in list_of_dirs:
@@ -29,31 +44,49 @@ for directory in list_of_dirs:
             new_file_name = file_name
             therm_param = []
             with open(new_file_name, mode='rb') as f_obj:
-                test = pickle.load(f_obj)
+                para_list = pickle.load(f_obj)
                 current_file_therm_para=[]
-                for para in test:
+                for para in para_list:
+
+                    # Filtering the word list in the para and removing all special symbols
                     words = para.split()
-                    therm_param = np.zeros(len(thermometeres))
+                    symbols = '${}()[].,:;+-*/&|<>=~" '
+                    words = map(lambda Element: Element.translate(
+                        {ord(c): None for c in symbols}).strip(), words)
+                    words = [x.lower() for x in words if x]
+
+                    arr = np.zeros((len(words), word2Vec_dimension))
+                    i = 0
+                    actual_len = 0
                     for word in words:
-                        word=word.lower()
-                        for index in range(len(thermometeres)):
-                            therm_word = thermometeres[index]
-                            split_therm=therm_word.split()
-                            current_similarity=0
-                            for ind_therm_param in split_therm:
-                                try:
-                                    current_similarity+=model.similarity(word,ind_therm_param)
-                                except:
-                                    pass
+                        try:
+                            word2vector = model.wv[word]
+                            arr[actual_len, :] = word2vector
+                            actual_len += 1
+                        except:
+                            pass
 
-                            therm_param[index]=therm_param[index]+current_similarity/len(split_therm)
-                    therm_param/=len(words)
-                    current_file_therm_para.append(therm_param)
+                    # removing the last rows of 0's
+                    arr = arr[0:actual_len, :]
 
-                pickle.dump( current_file_therm_para, open( "similarities/"+directory+"/"+'X2NCO1-maj', "wb" ) )
+                    # Calculating norms of the thermometer vector and the para vectors
+                    norm_arr = np.linalg.norm(arr, axis=1)
+                    norm_thermometer = np.linalg.norm(thermometer_vectors, axis=1)
+
+                    # Multiplying to get similarities
+                    similarity_vector = np.dot(np.true_divide(arr, norm_arr[:, None])
+                                               , (np.true_divide(thermometer_vectors, norm_thermometer[:, None])).T)
+
+                    similarity_vector = np.sum(similarity_vector, axis=0)/actual_len
+
+                    current_file_therm_para.append(similarity_vector)
+
+                pickle.dump(current_file_therm_para, open( "similarities/"+directory+"/"+'X2NCO1-maj', "wb" ) )
 
 end_time = time.time()
 print(end_time - start_time)
+
+
 
 #pickle.dump( all_w2v, open( "para_similarity.p", "wb" ) )
 # output_para_word_vec.append(current_file_word_vec)
