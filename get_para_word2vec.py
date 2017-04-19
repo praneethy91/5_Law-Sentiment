@@ -18,8 +18,17 @@ thermometeres = ['democrats', 'republicans', 'protestants', 'catholics', 'jews',
                  'christian fundamentalists', 'radical students', 'farmers', 'feminists', 'evangelical groups',
                  'elderly', 'supreme court', 'women']
 
-# Wrod2Vec size
+# Word2Vec size
 word2Vec_dimension = 100
+
+# Data directory for cases
+case_dir = 'data/clean_Mar_20/'
+
+# sub-directory containing our cases
+maj_dir = 'maj/'
+
+# similarities output directory
+similarities_output_dir = "similarities/"
 
 # Converting thermometers to vectors
 
@@ -34,16 +43,18 @@ for thermometer in thermometeres:
     i += 1
 
 start_time = time.time()
-list_of_dirs = os.listdir('data/clean_Mar_20')
+list_of_dirs = os.listdir(case_dir)
+
 for directory in list_of_dirs:
     if not directory.endswith('zip'):
-        files = ['data/clean_Mar_20/1964_new/maj/X2NCO1-maj.p']
-        print(directory)
-        os.makedirs("similarities/"+directory, exist_ok=True)
+
+        files = os.listdir(case_dir + directory + '/' + maj_dir)
+        os.makedirs(similarities_output_dir + directory, exist_ok=True)
+
         for file_name in files:
-            new_file_name = file_name
+            absolute_file_path = case_dir + directory + '/' + maj_dir +  file_name
             therm_param = []
-            with open(new_file_name, mode='rb') as f_obj:
+            with open(absolute_file_path, mode='rb') as f_obj:
                 para_list = pickle.load(f_obj)
                 current_file_therm_para=[]
                 for para in para_list:
@@ -81,7 +92,7 @@ for directory in list_of_dirs:
 
                     current_file_therm_para.append(similarity_vector)
 
-                pickle.dump(current_file_therm_para, open( "similarities/"+directory+"/"+'X2NCO1-maj', "wb" ) )
+                pickle.dump(current_file_therm_para, open(similarities_output_dir + directory + "/" + file_name, "wb"))
 
 end_time = time.time()
 print(end_time - start_time)
