@@ -58,8 +58,8 @@ def getParaSentimentList(para_list):
             #print(para)
             #print(res)
         for s in res["sentences"]:
-            if(demo or demo_local):
-                printSentenceResult(s)
+            #if(demo or demo_local):
+                #printSentenceResult(s)
             sentence_sentiment = s["sentimentValue"]
             para_sentiment += int(sentence_sentiment) - 2
             sentence_count += 1
@@ -80,16 +80,18 @@ def main():
         list_of_dirs = util.getDirectoryList(root_Directory)
         for directory in list_of_dirs:
             if not directory.endswith('zip'):
-                print(directory)
-                util.createDirectory("sentiment")
-                util.createDirectory("sentiment/" + directory)
+                year = int(directory)
+                if year >= 1964:
+                    print(directory)
+                    util.createDirectory("sentiment")
+                    util.createDirectory("sentiment/" + directory)
 
-                files = util.getFilesListFromDir(directory)
-                for file_name in files:
-                    para_list = util.getParaListFromFile(file_name, directory)
-                    avgParaSentimentList, paraSentimentList = getParaSentimentList(para_list)
-                    util.writeToPickle(paraSentimentList, "sentiment", directory, file_name, avg=False)
-                    util.writeToPickle(avgParaSentimentList, "sentiment", directory, file_name, avg=True)
+                    files = util.getFilesListFromDir(directory)
+                    for file_name in files:
+                        para_list = util.getParaListFromFile(file_name, directory)
+                        avgParaSentimentList, paraSentimentList = getParaSentimentList(para_list)
+                        util.writeToPickle(paraSentimentList, "sentiment", directory, file_name, avg=False)
+                        util.writeToPickle(avgParaSentimentList, "sentiment", directory, file_name, avg=True)
     else:
         para_list = [
             "DRUMMOND, C. J. The schooner American was at Oswego in the fall of 1872, and took in a cargo of coal for Chicago, leaving Oswego on the tenth of November. A general bill of lading was given, and a high price charged for the transportation of the coal from Oswego to Chicago, being $2.75 per ton. The schooner met with adverse winds and did not arrive at Port Huron until November 29th. The weather, according to the testimony of the witnesses, was very inclement that fall, and the captain concluded that the safest course was to strip the vessel and lay up at Port Huron. The schooner accordingly remained there with her cargo during the winter, and the coal was not delivered in Chicago or received by the consignees until May 8, 1873, when the spring freight was paid by the consignees on the coal, being much less than that charged in the bill of lading. After the coal had been thus delivered by the schooner to the consignees, a libel was filed claiming the amount of freight stated in the bill of lading, the consignees having refused to pay any more than the spring price of freight. The case went to proof before the district court, where the libel was dismissed; but a cross-libel having been filed claiming that the captain of the American was negligent in wintering at Port Hur on, and that the vessel should have come on in the fall of 1872, the district court gave a decree on the cross-libel for damages against the libelants in consequence of the supposed negligence of the captain. From t hese decrees the libelants have appealed to this court, and the question is whether the decrees of the district court are right.",
