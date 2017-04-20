@@ -31,7 +31,7 @@ outDir = "/home/nk2239/VADER_DATA_STORE"
 def getParaSentimentList(para_list):
     avgParaSentimentList = []
     paraSentimentList = []
-    start = time.time()
+    #start = time.time()
     for para in para_list:
 
         sentence_list = tokenize.sent_tokenize(para)
@@ -52,8 +52,8 @@ def getParaSentimentList(para_list):
             avgParaSentimentList.append(para_sentiment)
         sentiment = 1 if para_sentiment > 0 else (-1 if para_sentiment < 0 else 0)
         paraSentimentList.append(sentiment)
-    end = time.time()
-    print(end - start)
+    #end = time.time()
+    #print(end - start)
     return avgParaSentimentList, paraSentimentList
 
 

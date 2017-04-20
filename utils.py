@@ -8,7 +8,9 @@ def updateRootDir(val):
     root_dir = val
 
 def getDirectoryList(root_Directory):
+    print(root_dir)
     updateRootDir(root_Directory)
+    print(root_dir)
     return  os.listdir(root_Directory)
 
 def getFilesListFromDir(directory):
@@ -20,10 +22,13 @@ def createDirectory(directory_loc):
 
 def getParaListFromFile(file_name, directory):
     new_file_name = root_dir + "/" + directory + '/maj/' + file_name
-    with open(new_file_name, mode='rb') as f_obj:
+    return getDataFromPickle(new_file_name)
+
+def getDataFromPickle(file, directory = ''):
+    with open(directory + file, mode='rb') as f_obj:
         return pickle.load(f_obj)
 
-def writeToPickle(list, parentDir, directory, file_name, avg):
+def writeToPickle(list, parentDir, directory, file_name, avg=False):
     if(avg == True):
         pickle.dump(list, open( parentDir + "/" + directory + "/" + "Avg" + file_name, "wb"))
     else:
