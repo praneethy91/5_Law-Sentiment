@@ -4,7 +4,8 @@ import utils as utl
 
 demo_local = True
 local_path = "sentiment"
-
+username = 'nk2239'
+outDir = '/home/' + username + '/Aggregate/'
 
 def get_case_level_data_frame():
 	data_dir = 'data'
@@ -41,7 +42,7 @@ def get_relative_path_of_cases():
 			cases_files=utl.getFilesListFromDir(year)
 			for case in cases_files:
 				key = case.replace('-maj.p','')
-				paths[key]=utl.root_dir + "/" + year + '/maj/' + case
+				paths[key]=outDir + '/CaseLevel/'+ year+'/'+ case
 	return paths
 
 

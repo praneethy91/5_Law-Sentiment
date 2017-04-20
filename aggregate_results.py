@@ -1,7 +1,7 @@
 import ProcessJudgeData as pjd
 import utils as util
 import numpy as np
-
+import pickle as pkl
 username = 'nk2239'
 outDir = '/home/' + username + '/Aggregate/'
 
@@ -21,12 +21,19 @@ def case_level():
                 util.writeToPickle(np.dot(sentiment_list,similarity_list),outDir,directory,file)
 
 def judge_level(judge_to_case_dict, case_to_path_dict):
+    judges_to_score={}
     for judge, case_list in judge_to_case_dict.items():
+        current_judge_score=None
         for case_id in case_list:
             path=case_to_path_dict[case_id]
-            #To do Bhaskar
-            #file_to_load=open(())
-    return
+            current_score=pkl.load(open(path,'rb'))
+            if current_judge_score==None:
+                current_judge_score=current_score
+            else :
+                current_judge_score+=current_score
+        judges_to_score[judge]=current_judge_score/len(case_list)
+
+    return judges_to_score
 
 def main():
     data_frame = pjd.get_case_level_data_frame()
