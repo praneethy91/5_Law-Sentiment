@@ -8,9 +8,7 @@ def updateRootDir(val):
     root_dir = val
 
 def getDirectoryList(root_Directory):
-    #print(root_dir)
     updateRootDir(root_Directory)
-    #print(root_dir)
     return  os.listdir(root_Directory)
 
 def getFilesListFromDir(directory, orignal = True):
