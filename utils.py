@@ -8,13 +8,16 @@ def updateRootDir(val):
     root_dir = val
 
 def getDirectoryList(root_Directory):
-    print(root_dir)
+    #print(root_dir)
     updateRootDir(root_Directory)
-    print(root_dir)
+    #print(root_dir)
     return  os.listdir(root_Directory)
 
-def getFilesListFromDir(directory):
-    return os.listdir(root_dir +"/" +directory + '/maj')
+def getFilesListFromDir(directory, orignal = True):
+    maj = ''
+    if(orignal):
+        maj = '/maj'
+    return os.listdir(root_dir +"/" +directory + maj)
 
 def createDirectory(directory_loc):
     if not os.path.exists(directory_loc):

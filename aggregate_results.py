@@ -5,14 +5,14 @@ import pickle as pkl
 
 username = 'nk2239'
 outDir = '/home/' + username + '/Aggregate/'
-demo_local = False
+demo_local = True
 
 def case_level():
     sentiment_dir = '/home/' + username + '/VADER_DATA_STORE/'
     similarity_dir = '/home/' + username + '/SIMILARITY_DATA_STORE/'
     if(demo_local):
-        sentiment_dir = 'VADER_DATA_STORE/'
-        similarity_dir = 'SIMILARITY_DATA_STORE/'
+        sentiment_dir = 'VADER_DATA_STORE'
+        similarity_dir = 'SIMILARITY_DATA_STORE'
         outDir = 'Aggregate'
     list_similarity_dir = util.getDirectoryList(similarity_dir)
     outDirectory = outDir + '/CaseLevel'
@@ -20,12 +20,12 @@ def case_level():
         if not directory.endswith('zip'):
             util.createDirectory(outDirectory)
             util.createDirectory(outDirectory + "/" + directory)
-            files = util.getFilesListFromDir(directory)
+            files = util.getFilesListFromDir(directory, False)
             for file in files:
-                sentiment_list = util.getDataFromPickle(file, sentiment_dir + directory + '/')
-                similarity_list = util.getDataFromPickle(file, similarity_dir + directory + '/')
+                sentiment_list = util.getDataFromPickle(file, sentiment_dir + "/" + directory + '/')
+                similarity_list = util.getDataFromPickle(file, similarity_dir + "/" + directory + '/')
                 if(len(similarity_list) == len(sentiment_list)):
-                    util.writeToPickle(np.dot(sentiment_list,similarity_list),outDir,directory,file)
+                    util.writeToPickle(np.dot(sentiment_list,similarity_list),outDirectory,directory,file)
 
 def judge_level():
     data_frame = pjd.get_case_level_data_frame()
