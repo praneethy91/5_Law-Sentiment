@@ -74,7 +74,7 @@ for directory in list_of_dirs:
             if actual_len != 0:
                 arr = arr[0:actual_len, :]
             else:
-                arr = arr[1, :]
+                arr = np.zeros((1, word2Vec_dimension))
                 actual_len = 1
 
             # Calculating norms of the thermometer vector and the para vectors
