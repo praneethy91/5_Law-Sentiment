@@ -2,19 +2,21 @@ import os
 import pickle
 
 root_dir = 'data/clean_Mar_20'
+slash = "/"
 
 def updateRootDir(val):
     global root_dir
     root_dir = val
 
 def getDirectoryList(root_Directory):
-    print(root_dir)
     updateRootDir(root_Directory)
-    print(root_dir)
     return  os.listdir(root_Directory)
 
-def getFilesListFromDir(directory):
-    return os.listdir(root_dir +"/" +directory + '/maj')
+def getFilesListFromDir(directory, orignal = True):
+    maj = ''
+    if(orignal):
+        maj = '/maj'
+    return os.listdir(root_dir +"/" +directory + maj)
 
 def createDirectory(directory_loc):
     if not os.path.exists(directory_loc):
@@ -29,7 +31,13 @@ def getDataFromPickle(file, directory = ''):
         return pickle.load(f_obj)
 
 def writeToPickle(list, parentDir, directory, file_name, avg=False):
-    if(avg == True):
-        pickle.dump(list, open( parentDir + "/" + directory + "/" + "Avg" + file_name, "wb"))
+    parDirSlash = slash
+    dirSlash = slash
+    if parentDir == '':
+        parDirSlash = ""
+    if dir == '': 
+        dirSlash = ""
+    if avg == True:
+        pickle.dump(list, open( parentDir + parDirSlash + directory + dirSlash + "Avg" + file_name, "wb"))
     else:
-        pickle.dump(list, open( parentDir + "/" + directory + "/" + file_name, "wb"))
+        pickle.dump(list, open( parentDir + parDirSlash + directory + dirSlash + file_name, "wb"))

@@ -5,7 +5,12 @@ import utils as utl
 demo_local = True
 local_path = "sentiment"
 username = 'nk2239'
-outDir = '/home/' + username + '/Aggregate/'
+outDir = '/home/' + username + '/Aggregate/CaseLevel/'
+
+
+def update_demo_local(val):
+    global demo_local
+    demo_local = val
 
 def get_case_level_data_frame():
     data_dir = 'data'
@@ -20,7 +25,6 @@ def get_case_level_data_frame():
 
 def create_dict_of_judges_cases(data_frame):
     judges_dict={}
-    #cases_data=get_case_level_data_frame()
     cases_data = data_frame
     for index,row in cases_data.iterrows():
       if not row['Author'] in judges_dict:
@@ -32,18 +36,17 @@ def create_dict_of_judges_cases(data_frame):
 def get_relative_path_of_cases():
     root_dir = 'data/clean_Mar_20'
     if demo_local:
-        root_dir = '../../Data/clean_Mar_20'
-    years=utl.getDirectoryList(root_dir)
-    if demo_local:
-        outDir = 'Aggregate'
-        years = ['1964']
+        outDir = '../Aggregate/CaseLevel/'
+    years=utl.getDirectoryList(outDir)
+    #if demo_local:
+    #   years = ['1964']
     paths={}
     for year in years:
         if not year.endswith('zip') and year >= '1964':
-            cases_files=utl.getFilesListFromDir(year)
+            cases_files=utl.getFilesListFromDir(year, False)
             for case in cases_files:
                 key = case.replace('-maj.p','')
-                paths[key]=outDir + '/CaseLevel/'+ year+'/'+ case
+                paths[key]=outDir + year+'/'+ case
     return paths
 
 
