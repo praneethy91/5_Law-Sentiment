@@ -2,6 +2,7 @@ import os
 import pickle
 
 root_dir = 'data/clean_Mar_20'
+slash = "/"
 
 def updateRootDir(val):
     global root_dir
@@ -30,7 +31,13 @@ def getDataFromPickle(file, directory = ''):
         return pickle.load(f_obj)
 
 def writeToPickle(list, parentDir, directory, file_name, avg=False):
-    if(avg == True):
-        pickle.dump(list, open( parentDir + "/" + directory + "/" + "Avg" + file_name, "wb"))
+    parDirSlash = slash
+    dirSlash = slash
+    if parentDir == '':
+        parDirSlash = ""
+    if dir == '': 
+        dirSlash = ""
+    if avg == True:
+        pickle.dump(list, open( parentDir + parDirSlash + directory + dirSlash + "Avg" + file_name, "wb"))
     else:
-        pickle.dump(list, open( parentDir + "/" + directory + "/" + file_name, "wb"))
+        pickle.dump(list, open( parentDir + parDirSlash + directory + dirSlash + file_name, "wb"))
