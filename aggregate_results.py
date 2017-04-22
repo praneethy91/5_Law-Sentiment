@@ -11,8 +11,8 @@ def case_level():
     sentiment_dir = '/home/' + username + '/VADER_DATA_STORE/'
     similarity_dir = '/home/' + username + '/SIMILARITY_DATA_STORE/'
     if(demo_local):
-        sentiment_dir = 'VADER_DATA_STORE'
-        similarity_dir = 'SIMILARITY_DATA_STORE'
+        sentiment_dir = '../VADER_DATA_STORE'
+        similarity_dir = '../SIMILARITY_DATA_STORE'
         outDir = '../Aggregate'
     list_similarity_dir = util.getDirectoryList(similarity_dir)
     outDirectory = outDir + '/CaseLevel'
@@ -24,8 +24,12 @@ def case_level():
             for file in files:
                 sentiment_list = util.getDataFromPickle(file, sentiment_dir + "/" + directory + '/')
                 similarity_list = util.getDataFromPickle(file, similarity_dir + "/" + directory + '/')
-                if(len(similarity_list) == len(sentiment_list)):
-                    util.writeToPickle(np.dot(sentiment_list,similarity_list),outDirectory,directory,file)
+                if len(similarity_list) == len(sentiment_list):
+                    ss = np.dot(sentiment_list, similarity_list)
+                    if len(sentiment_list) == 0:
+                        util.writeToPickle(0, outDirectory, directory, file)
+                    else:
+                        util.writeToPickle(ss/len(sentiment_list),outDirectory,directory,file)
 
 def judge_level():
     data_frame = pjd.get_case_level_data_frame()
@@ -51,9 +55,8 @@ def judge_level():
 
 def main():
     pjd.update_demo_local(demo_local)
-    #case_level()
+    case_level()
     judge_level()
-
 
 if __name__ == "__main__":
     main()
