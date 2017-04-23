@@ -21,3 +21,4 @@ anes_data=anes_data[anes_data['VCF0004']>1963]
 anes_data=anes_data[anes_data['VCF0901B']!='99']
 anes_data['VCF0901A']=anes_data['VCF0901A'].map(circuit_mapping)
 filtered_data=anes_data.fillna(anes_data.mean())
+filtered_data.to_csv('outcome_variables.csv')
