@@ -15,7 +15,7 @@ circuit_mapping={
 	1:11, 12:11, 13:11,
 	11:12
 }
-ranges=np.r_[1,112:150,645,646]
+ranges=np.r_[1,112:151,645,646]
 anes_data=anes_data_inp.iloc[:,ranges]
 anes_data=anes_data[anes_data['VCF0004']>1963]
 anes_data=anes_data[anes_data['VCF0901B']!='99']
