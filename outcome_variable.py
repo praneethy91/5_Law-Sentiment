@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-anes_data=pd.read_stata("ANES_raw2008-1948.dta",convert_categoricals=False)
+anes_data_inp=pd.read_stata("ANES_raw2008-1948.dta",convert_categoricals=False)
 circuit_mapping={
 	23:1, 25:1, 33:1, 44:1,
 	9:2, 36:2, 50:2,
@@ -20,5 +20,5 @@ anes_data=anes_data_inp.iloc[:,ranges]
 anes_data=anes_data[anes_data['VCF0004']>1963]
 anes_data=anes_data[anes_data['VCF0901B']!='99']
 anes_data['VCF0901A']=anes_data['VCF0901A'].map(circuit_mapping)
-filtered_data=anes_data.fillna(anes_data.mean())
-filtered_data.to_csv('outcome_variables.csv')
+circuit_year_avg=anes_data.groupby(['VCF0004','VCF0901A']).mean()
+circuit_year_avg.to_csv('outcome_variables.csv')
