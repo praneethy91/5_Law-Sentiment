@@ -77,6 +77,28 @@ def judge_level_accurate():
         file = judge + '.p'
         util.writeToPickle(score, outDirectory, '', file)
 
+def judge_level_usable():
+    data_frame = pjd.get_case_level_data_frame()
+    judge_to_case_dict = pjd.create_dict_of_judges_cases(data_frame)
+    case_to_path_dict = pjd.get_relative_path_of_cases()
+    if demo_local :
+        outDir = '../Aggregate'
+    outDirectory = outDir + "/JudgeLevelUsable"
+    util.createDirectory(outDirectory)
+    for judge, case_list in judge_to_case_dict.items():
+        current_judge_score = np.zeros(40)
+        case_count = 0
+        for case_id in case_list:
+            if case_id in case_to_path_dict:
+                case_count += 1
+                path=case_to_path_dict[case_id]
+                current_score=pkl.load(open(path,'rb'))
+                current_judge_score += current_score
+        if not case_count == 0:
+            score = current_judge_score/case_count
+            file = judge + '.p'
+            util.writeToPickle(score, outDirectory, '', file)
+
 def check_case_exist():
     data_frame = pjd.get_case_level_data_frame()
     judge_to_case_dict = pjd.create_dict_of_judges_cases(data_frame)
@@ -100,7 +122,8 @@ def main():
     #case_level()
     #judge_level()
     #check_case_exist()
-    judge_level_accurate()
+    #judge_level_accurate()
+    judge_level_usable()
 
 if __name__ == "__main__":
     main()
