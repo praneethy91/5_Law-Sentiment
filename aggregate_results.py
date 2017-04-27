@@ -99,6 +99,36 @@ def judge_level_usable():
             file = judge + '.p'
             util.writeToPickle(score, outDirectory, '', file)
 
+def circuityear_level():
+    data_frame = pjd.get_case_level_data_frame()
+    circuityear_case_dict = pjd.create_dict_of_judges_cases(data_frame)
+    case_to_path_dict = pjd.get_relative_path_of_cases()
+    if demo_local :
+        outDir = '../Aggregate'
+    outDirectory = outDir + "/CircuitYear"
+    util.createDirectory(outDirectory)
+    for circuityear, case_list in circuityear_case_dict.items():
+        current_circuityear_score = np.zeros(40)
+        case_count = 0
+        for case_id in case_list:
+            if case_id in case_to_path_dict:
+                case_count += 1
+                path=case_to_path_dict[case_id]
+                current_score=pkl.load(open(path,'rb'))
+                current_circuityear_score += current_score
+        '''
+        if not case_count == 0:
+            score = current_circuityear_score/case_count
+            file = circuityear + '.p'
+            util.writeToPickle(score, outDirectory, '', file)
+        '''
+        if case_count == 0:
+            score = np.zeros(40)
+        else:
+            score = current_circuityear_score/case_count
+        file = circuityear + '.p'
+        util.writeToPickle(score, outDirectory, '', file)
+
 def check_case_exist():
     data_frame = pjd.get_case_level_data_frame()
     judge_to_case_dict = pjd.create_dict_of_judges_cases(data_frame)
@@ -123,7 +153,7 @@ def main():
     #judge_level()
     #check_case_exist()
     #judge_level_accurate()
-    judge_level_usable()
-
+    #judge_level_usable()
+    circuityear_level()
 if __name__ == "__main__":
     main()
