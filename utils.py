@@ -43,4 +43,4 @@ def writeToPickle(list, parentDir, directory, file_name, avg=False):
         pickle.dump(list, open( parentDir + parDirSlash + directory + dirSlash + file_name, "wb"))
 
 def normalize_similarity(similarity_vector):
-    (similarity_vector + 1.0)/2
+    return (similarity_vector + 1.0)/2
