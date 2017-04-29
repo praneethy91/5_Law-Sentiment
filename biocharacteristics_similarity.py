@@ -1,12 +1,8 @@
-import os
-from contextlib import ExitStack
-
-import pandas as pd
 import configparser
-import pickle as pck
 import numpy as np
-import codecs
-import sys
+import os
+import pickle as pck
+import pandas as pd
 
 # Reading values of the configuration file
 config = configparser.ConfigParser()
@@ -31,68 +27,85 @@ bio_columns = ['x_dem', 'x_republican', 'x_instate_ba', 'x_elev', 'x_unity',
                'x_pbank', 'x_pmag', 'x_ageon40s', 'x_ageon50s', 'x_ageon60s',
                'x_ageon40orless', 'x_ageon70ormore', 'x_pago']
 
-bio_weighted_dict = {}
-bio_unweighted_dict = {}
-
-bio_weighted_num_dict = {}
-bio_unweighted_num_dict = {}
-
-# case_data_df_iterator_small = pd.read_stata(vote_level_dataset, iterator=True, chunksize=10)
-# case_data_df_chunk = case_data_df_iterator_small.__next__()
-# col_id_map = {}
-# col_id_map['Circuit'] = case_data_df_chunk.columns.get_loc('Circuit')
-# col_id_map['year'] = case_data_df_chunk.columns.get_loc('year')
-# for bio_column in bio_columns:
-#     col_id_map[bio_column] = case_data_df_chunk.columns.get_loc(bio_column)
-
 with open(circuit_year_to_case_file, 'rb') as f:
     ckt_case_map  = pck.load(f)
 
-for (ckt, year), case_df in ckt_case_map.items():
+# bio_weighted_dict = {}
+# bio_unweighted_dict = {}
+#
+# bio_weighted_num_dict = {}
+# bio_unweighted_num_dict = {}
+#
+# for (ckt, year), case_df in ckt_case_map.items():
+#     ckt = int(ckt)
+#     year = int(year)
+#     if year >= 1964:
+#         bio_weighted_dict[(ckt, year)] = {}
+#         bio_unweighted_dict[(ckt, year)] = {}
+#         bio_weighted_num_dict[(ckt, year)] = {}
+#         bio_unweighted_num_dict[(ckt, year)] = {}
+#         for bio_column in bio_columns:
+#             bio_weighted_dict[(ckt, year)][bio_column] = np.zeros(40, dtype=np.float64)
+#             bio_unweighted_dict[(ckt, year)][bio_column] = np.zeros(40, dtype=np.float64)
+#             bio_unweighted_num_dict[(ckt, year)][bio_column] = np.zeros(40, dtype=np.float64)
+#             bio_weighted_num_dict[(ckt, year)][bio_column] = np.zeros(40, dtype=np.float64)
+#
+# chunk = 1
+# for case_data_df_chunk in case_data_df_iterator:
+#     for index, row in case_data_df_chunk.iterrows():
+#         ckt = row['Circuit']
+#         year = row['year']
+#         if(~ np.isfinite(ckt) or ~ np.isfinite(year)):
+#             continue
+#         year = int(row['year'])
+#         case = row['caseid']
+#         case_path = os.path.join(case_similarities_dir, str(year), (case.upper() + '-maj.p'))
+#         if os.path.isfile(case_path) and year >= 1964:
+#             with open(case_path, mode='rb') as f:
+#                 case_similarity = pck.load(f)
+#             for column in bio_columns:
+#                 value = np.float64(row[column])
+#                 if (~ np.isfinite(value)):
+#                     continue
+#                 # if np.min(case_similarity) <= 0.0:
+#                 #      print('Dangerous')
+#                 bio_weighted_dict[(ckt, year)][column] = np.add(bio_weighted_dict[(ckt, year)][column], (value * case_similarity))
+#                 bio_unweighted_dict[(ckt, year)][column] = np.add(bio_unweighted_dict[(ckt, year)][column], (value * np.ones(40, dtype=np.float64)))
+#                 bio_weighted_num_dict[(ckt, year)][column] = np.add(bio_weighted_num_dict[(ckt, year)][column], case_similarity)
+#                 bio_unweighted_num_dict[(ckt, year)][column] = np.add(bio_unweighted_num_dict[(ckt, year)][column], np.ones(40, dtype=np.float64))
+#     print('Chunk: ' + str(chunk))
+#     chunk += 1
+#     if chunk == 6:
+#         break
+#
+# for (ckt, year), ls in ckt_case_map.items():
+#     ckt = int(ckt)
+#     year = int(year)
+#     if year >= 1964:
+#         for bio_column in bio_columns:
+#             if np.sum(bio_unweighted_dict[(ckt, year)][bio_column]) == 0.0:
+#                 continue
+#             bio_weighted_dict[(ckt, year)][bio_column] = np.divide(bio_weighted_dict[(ckt, year)][bio_column], bio_weighted_num_dict[(ckt, year)][bio_column])
+#             bio_unweighted_dict[(ckt, year)][bio_column] = np.divide(bio_unweighted_dict[(ckt, year)][bio_column], bio_unweighted_num_dict[(ckt, year)][bio_column])
+#
+# for (ckt, year), trs in ckt_case_map.items():
+#     ckt = int(ckt)
+#     year = int(year)
+#     if year >= 1964:
+#         for bio_column in bio_columns:
+#             if np.min(bio_unweighted_dict[(ckt, year)][bio_column]) < 0.0:
+#                 print(bio_unweighted_dict[(ckt, year)][bio_column])
+#
+# pck.dump(bio_weighted_dict, open('data\\bio_weighted_dict.pkl', 'wb'))
+# pck.dump(bio_unweighted_dict, open('data\\bio_unweighted_dict.pkl', 'wb'))
+
+bio_weighted_dict = pck.load(open('data\\bio_weighted_dict.pkl', 'rb'))
+bio_unweighted_dict = pck.load(open('data\\bio_weighted_dict.pkl', 'rb'))
+
+for (ckt, year), gkhv in ckt_case_map.items():
     ckt = int(ckt)
     year = int(year)
     if year >= 1964:
-        bio_weighted_dict[(ckt, year)] = {}
-        bio_unweighted_dict[(ckt, year)] = {}
-        bio_weighted_num_dict[(ckt, year)] = {}
-        bio_unweighted_num_dict[(ckt, year)] = {}
         for bio_column in bio_columns:
-            bio_weighted_dict[(ckt, year)][bio_column] = np.zeros(40)
-            bio_unweighted_dict[(ckt, year)][bio_column] = np.zeros(40)
-            bio_unweighted_num_dict[(ckt, year)][bio_column] = np.zeros(40)
-            bio_weighted_num_dict[(ckt, year)][bio_column] = np.zeros(40)
-
-chunk = 1
-for case_data_df_chunk in case_data_df_iterator:
-    for index, row in case_data_df_chunk.iterrows():
-        ckt = row['Circuit']
-        year = row['year']
-        if(~ np.isfinite(ckt) or ~ np.isfinite(year)):
-            continue
-        year = int(row['year'])
-        case = row['caseid']
-        case_path = os.path.join(case_similarities_dir, str(year), (case.upper() + '-maj.p'))
-        if os.path.isfile(case_path) and year >= 1964:
-            with open(case_path, mode='rb') as f:
-                case_similarity = pck.load(f)
-            for column in bio_columns:
-                value = row[column]
-                if(~ np.isfinite(value)):
-                    continue
-                bio_weighted_dict[(ckt, year)][column] += value * case_similarity
-                bio_unweighted_dict[(ckt, year)][column] += value * np.ones(40)
-                bio_weighted_num_dict[(ckt, year)][column] += case_similarity
-                bio_unweighted_num_dict[(ckt, year)][column] += np.ones(40)
-    print('Chunk: ' + str(chunk))
-    chunk += 1
-
-for (ckt, year), ls in ckt_case_map.items():
-    ckt = int(ckt)
-    year = int(year)
-    if year >= 1964:
-        for bio_column in bio_columns:
-            bio_weighted_dict[(ckt, year)][bio_column] /= bio_weighted_num_dict[(ckt, year)][bio_column]
-            bio_unweighted_dict[(ckt, year)][bio_column] /= bio_unweighted_num_dict[(ckt, year)][bio_column]
-
-pck.dump(bio_weighted_dict, open('data\\bio_weighted_dict.pkl', 'wb'))
-pck.dump(bio_unweighted_dict, open('data\\bio_unweighted_dict.pkl', 'wb'))
+            if np.min(bio_unweighted_dict[(ckt, year)][bio_column]) < 0.0:
+                print(bio_unweighted_dict[(ckt, year)][bio_column])
