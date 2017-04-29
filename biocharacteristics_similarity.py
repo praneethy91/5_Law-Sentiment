@@ -77,8 +77,6 @@ for case_data_df_chunk in case_data_df_iterator:
                 bio_unweighted_num_dict[(ckt, year)][column] = np.add(bio_unweighted_num_dict[(ckt, year)][column], np.ones(40, dtype=np.float64))
     print('Chunk: ' + str(chunk))
     chunk += 1
-    if chunk > 20:
-        break
 
 for (ckt, year), ls in ckt_case_map.items():
     ckt = int(ckt)
@@ -99,7 +97,7 @@ for (ckt, year), trs in ckt_case_map.items():
         for bio_column in bio_columns:
             if np.min(bio_unweighted_dict[(ckt, year)][bio_column]) < 0.0 or np.max(bio_unweighted_dict[(ckt, year)][bio_column]) > 1.0:
                 print('unweighted dictionary not between 0 and 1: Circuit:{0}, year:{1}, bio_column:{2}'.format(ckt, year, bio_column))
-            if np.min(bio_weighted_dict[(ckt, year)][bio_column]) < 0.0 or bio_weighted_dict[(ckt, year)][bio_column] > 1.0:
+            if np.min(bio_weighted_dict[(ckt, year)][bio_column]) < 0.0 or np.max(bio_weighted_dict[(ckt, year)][bio_column]) > 1.0:
                 print('weighted dictionary not between 0 and 1: Circuit:{0}, year:{1}, bio_column:{2}'.format(ckt, year, bio_column))
         os.makedirs('data\\bioaverage\\' + str(ckt) + '_' + str(year), exist_ok=True)
         pck.dump(bio_weighted_dict[(ckt, year)], open('data\\bioaverage\\' + str(ckt) + '_' + str(year) + '\\bio_weighted_dict.pkl', 'wb'))
