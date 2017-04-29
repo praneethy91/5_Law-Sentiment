@@ -24,6 +24,8 @@ def case_level():
             for file in files:
                 sentiment_list = util.getDataFromPickle(file, sentiment_dir + "/" + directory + '/')
                 similarity_list = util.getDataFromPickle(file, similarity_dir + "/" + directory + '/')
+                for similarity in similarity_list:
+                    similarity[:] = [util.normalize_similarity(score) for score in similarity]
                 if len(similarity_list) == len(sentiment_list):
                     ss = np.dot(sentiment_list, similarity_list)
                     if len(sentiment_list) == 0:
@@ -101,33 +103,36 @@ def judge_level_usable():
 
 def circuityear_level():
     data_frame = pjd.get_case_level_data_frame()
-    circuityear_case_dict = pjd.create_dict_of_judges_cases(data_frame)
+    circuityear_case_dict = util.getDataFromPickle('circuit_year_level','../')
     case_to_path_dict = pjd.get_relative_path_of_cases()
     if demo_local :
         outDir = '../Aggregate'
-    outDirectory = outDir + "/CircuitYear"
+    outDirectory = outDir + "/CircuitYearLevel"
     util.createDirectory(outDirectory)
     for circuityear, case_list in circuityear_case_dict.items():
-        current_circuityear_score = np.zeros(40)
-        case_count = 0
-        for case_id in case_list:
-            if case_id in case_to_path_dict:
-                case_count += 1
-                path=case_to_path_dict[case_id]
-                current_score=pkl.load(open(path,'rb'))
-                current_circuityear_score += current_score
-        '''
-        if not case_count == 0:
-            score = current_circuityear_score/case_count
-            file = circuityear + '.p'
+        circuit=circuityear[0]
+        year=circuityear[1]
+        if year>1963:
+            current_circuityear_score = np.zeros(40)
+            case_count = 0
+            for case_id in case_list:
+                if case_id in case_to_path_dict:
+                    case_count += 1
+                    path=case_to_path_dict[case_id]
+                    current_score=pkl.load(open(path,'rb'))
+                    current_circuityear_score += current_score
+            if not case_count == 0:
+                score = current_circuityear_score/case_count
+                file = '{0}_{1}.p'.format(circuit,year)
+                util.writeToPickle(score, outDirectory, '', file)
+            '''
+            if case_count == 0:
+                score = np.zeros(40)
+            else:
+                score = current_circuityear_score/case_count
+            file = '{1}_{2}.p'.format(circuit,year)
             util.writeToPickle(score, outDirectory, '', file)
-        '''
-        if case_count == 0:
-            score = np.zeros(40)
-        else:
-            score = current_circuityear_score/case_count
-        file = circuityear + '.p'
-        util.writeToPickle(score, outDirectory, '', file)
+            '''
 
 def check_case_exist():
     data_frame = pjd.get_case_level_data_frame()
@@ -148,7 +153,7 @@ def check_case_exist():
 
 
 def main():
-    #pjd.update_demo_local(demo_local)
+    pjd.update_demo_local(demo_local)
     #case_level()
     #judge_level()
     #check_case_exist()
