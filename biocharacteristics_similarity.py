@@ -78,13 +78,15 @@ for case_data_df_chunk in case_data_df_iterator:
     print('Chunk: ' + str(chunk))
     chunk += 1
 
+warning_string = ''
+
 for (ckt, year), ls in ckt_case_map.items():
     ckt = int(ckt)
     year = int(year)
     if year >= 1964:
         for bio_column in bio_columns:
             if np.sum(bio_unweighted_num_dict[(ckt, year)][bio_column]) == 0.0:
-                print('no valid bio characteristic for: Circuit:{0}, year:{1}, bio_column:{2}'.format(ckt, year, bio_column))
+                warning_string += 'no valid bio characteristic for: Circuit:{0}, year:{1}, bio_column:{2}\n'.format(ckt, year, bio_column)
                 continue
             bio_weighted_dict[(ckt, year)][bio_column] = np.divide(bio_weighted_dict[(ckt, year)][bio_column], bio_weighted_num_dict[(ckt, year)][bio_column])
             bio_unweighted_dict[(ckt, year)][bio_column] = np.divide(bio_unweighted_dict[(ckt, year)][bio_column], bio_unweighted_num_dict[(ckt, year)][bio_column])
@@ -102,6 +104,9 @@ for (ckt, year), trs in ckt_case_map.items():
         os.makedirs('data\\bioaverage\\' + str(ckt) + '_' + str(year), exist_ok=True)
         pck.dump(bio_weighted_dict[(ckt, year)], open('data\\bioaverage\\' + str(ckt) + '_' + str(year) + '\\bio_weighted_dict.pkl', 'wb'))
         pck.dump(bio_unweighted_dict[(ckt, year)], open('data\\bioaverage\\' + str(ckt) + '_' + str(year) + '\\bio_unweighted_dict.pkl', 'wb'))
+
+# Saving the warning file
+pck.dump(warning_string, open('data\warnings.txt', 'wb'))
 
 # load bio averages dictionary
 # for (ckt, year), gkhv in ckt_case_map.items():
