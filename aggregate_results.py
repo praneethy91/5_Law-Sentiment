@@ -82,15 +82,20 @@ def judge_level_accurate():
 def judge_level_usable():
     data_frame = pjd.get_case_level_data_frame()
     judge_to_case_dict = pjd.create_dict_of_judges_cases(data_frame)
-    case_to_path_dict = pjd.get_relative_path_of_cases()
+    case_to_path_dict, case_set = pjd.get_relative_path_of_cases()
     if demo_local :
         outDir = '../Aggregate'
     outDirectory = outDir + "/JudgeLevelUsable"
     util.createDirectory(outDirectory)
+    err_count = 0
     for judge, case_list in judge_to_case_dict.items():
         current_judge_score = np.zeros(40)
         case_count = 0
         for case_id in case_list:
+            if case_id in case_set:
+                err_count += 1
+            else:
+                pass
             if case_id in case_to_path_dict:
                 case_count += 1
                 path=case_to_path_dict[case_id]
@@ -100,15 +105,19 @@ def judge_level_usable():
             score = current_judge_score/case_count
             file = judge + '.p'
             util.writeToPickle(score, outDirectory, '', file)
+    if err_count == 0:
+        print("No change needed")
+    else:
+        print("Change case to path method")
 
 def circuityear_level():
-    data_frame = pjd.get_case_level_data_frame()
     circuityear_case_dict = util.getDataFromPickle('circuit_year_level','../')
-    case_to_path_dict = pjd.get_relative_path_of_cases()
+    case_to_path_dict, case_set = pjd.get_relative_path_of_cases()
     if demo_local :
         outDir = '../Aggregate'
     outDirectory = outDir + "/CircuitYearLevel"
     util.createDirectory(outDirectory)
+    err_count = 0
     for circuityear, case_list in circuityear_case_dict.items():
         circuit=circuityear[0]
         year=circuityear[1]
@@ -116,6 +125,10 @@ def circuityear_level():
             current_circuityear_score = np.zeros(40)
             case_count = 0
             for case_id in case_list:
+                if case_id in case_set:
+                    err_count += 1
+                else:
+                    pass
                 if case_id in case_to_path_dict:
                     case_count += 1
                     path=case_to_path_dict[case_id]
@@ -125,14 +138,18 @@ def circuityear_level():
                 score = current_circuityear_score/case_count
                 file = '{0}_{1}.p'.format(circuit,year)
                 util.writeToPickle(score, outDirectory, '', file)
-            '''
+    if err_count == 0:
+        print("No change needed")
+    else:
+        print("Change case to path method")
+    '''
             if case_count == 0:
                 score = np.zeros(40)
             else:
                 score = current_circuityear_score/case_count
             file = '{1}_{2}.p'.format(circuit,year)
             util.writeToPickle(score, outDirectory, '', file)
-            '''
+    '''
 
 def check_case_exist():
     data_frame = pjd.get_case_level_data_frame()
@@ -158,7 +175,8 @@ def main():
     #judge_level()
     #check_case_exist()
     #judge_level_accurate()
-    #judge_level_usable()
-    circuityear_level()
+    judge_level_usable()
+    #circuityear_level()
+
 if __name__ == "__main__":
     main()
