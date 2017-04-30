@@ -44,3 +44,19 @@ def writeToPickle(list, parentDir, directory, file_name, avg=False):
 
 def normalize_similarity(similarity_vector):
     return (similarity_vector + 1.0)/2
+
+def rename():
+    root_dir = '../Aggregate'
+    folder = 'CircuitYearLevel'
+    updateRootDir(root_dir)
+    files = getFilesListFromDir(folder, False)
+    for file_name in files:
+        file_name = root_dir + "/" + folder + "/" +file_name
+        os.rename(file_name, file_name.replace('.0',''))
+
+def main():
+    rename()
+
+if __name__ == "__main__":
+    main()
+
