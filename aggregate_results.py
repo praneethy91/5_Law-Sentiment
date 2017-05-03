@@ -169,14 +169,21 @@ def check_case_exist():
             util.writeToPickle([len(case_list), case_count], outDirectory, '', file)
 
 
+def judge_sentiment_for_instrument():
+    data_frame = pjd.get_case_level_data_frame()
+    judge_to_case_dict = pjd.create_dict_of_judges_cases(data_frame)
+    case_to_path_dict, case_set = pjd.get_relative_path_of_cases()
+
+
 def main():
     pjd.update_demo_local(demo_local)
     #case_level()
     #judge_level()
     #check_case_exist()
     #judge_level_accurate()
-    judge_level_usable()
+    #judge_level_usable()
     #circuityear_level()
+    judge_sentiment_for_instrument()
 
 if __name__ == "__main__":
     main()
