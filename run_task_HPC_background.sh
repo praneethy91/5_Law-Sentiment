@@ -14,10 +14,10 @@
 
 # we expect the job to finish within 1 hours. If it takes longer than 1
 # hours, SLURM can kill it:
-#SBATCH --time=99:00:00
+#SBATCH --time=6:00:00
 
 # we expect the job to use no more than 10GB of memory:
-#SBATCH --mem=30GB
+#SBATCH --mem=70GB
 
 # we want the job to be named "myMatlabTest" rather than something generated
 # from the script name. This will affect the name of the job as reported
@@ -27,12 +27,12 @@
 # when the job ends, send me an email at this email address.
 # replace with your email address, and uncomment that line if you really need to receive an email.
 #SBATCH --mail-type=END
-#SBATCH --mail-user=nk2239@nyu.edu
+#SBATCH --mail-user=bsg348@nyu.edu
 
 # both standard output and standard error are directed to the same file.
 # It will be placed in the directory I submitted the job from and will
 # have a name like slurm_12345.out
-#SBATCH --output=slurm_%j.out
+#SBATCH --output=abc.out
 
 # once the first non-comment, non-SBATCH-directive line is encountered, SLURM
 # stops looking for SBATCH directives. The remainder of the script is  executed
@@ -41,10 +41,5 @@
 # first we ensure a clean running environment:
 
 module purge
-module load jdk/1.8.0_111
 module load python3/intel/3.5.3
-module load nltk/3.2.2
-java -mx5g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -timeout 10000000000000000000000 > NLP-server2.log 2>&1 &
-
-sleep 20;
-python3 paragraph_sentiment.py
+python3 get_ckt_yr_from_case.py
