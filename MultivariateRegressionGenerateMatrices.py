@@ -28,7 +28,7 @@ S_matrix=np.zeros((number_of_ckt_years*number_of_thermometers,1))
 counter=0
 
 
-df = pd.DataFrame(columns=('circuit_thermometer','thermometer_year'))
+df = pd.DataFrame(columns=('circuit_thermometer','thermometer_year','circuit_year'))
 
 dataframe_index=0
 for ckt_yr in circuit_year:
@@ -62,7 +62,7 @@ for ckt_yr in circuit_year:
     for therm in range(number_of_thermometers):
         print("ck",circuit_number +"_"+ str(therm))
         print("kt",str(therm) + "_"+year_number)
-        df.loc[dataframe_index] = [circuit_number +"_"+ str(therm), str(therm)  +"_"+year_number]
+        df.loc[dataframe_index] = [circuit_number +"_"+ str(therm), str(therm)  +"_"+year_number,circuit_number+"_"+year_number]
         dataframe_index += 1
 
 print("dumping Z matrix")
@@ -74,6 +74,7 @@ pkl.dump(S_matrix,open(home_folder+"S_matrix.pkl","wb"))
 print(df.iloc[100:200])
 dummies_ck=pd.get_dummies(df[['circuit_thermometer']])
 dummies_kt=pd.get_dummies(df[['thermometer_year']])
+dummies_ct=pd.get_dummies(df[['circuit_year']])
 print(dummies_ck.shape)
 print(Z_matrix.shape)
 print(dummies_kt.shape)
@@ -82,4 +83,6 @@ print(dummies_kt.shape)
 print("dumping gamma_ck")
 pkl.dump(dummies_ck,open(home_folder+"gamma_ck","wb"))
 print("dumping gamma_kt")
-pkl.dump(dummies_ck,open(home_folder+"gamma_kt","wb"))
+pkl.dump(dummies_kt,open(home_folder+"gamma_kt","wb"))
+print("dumping gamma_ct")
+pkl.dump(dummies_ct,open(home_folder+"gamma_ct","wb"))
