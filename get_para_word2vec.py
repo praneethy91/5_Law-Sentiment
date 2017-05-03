@@ -1,6 +1,6 @@
 import os
 import pickle
-
+import utils
 import numpy as np
 from gensim.models.word2vec import Word2Vec
 
@@ -26,7 +26,7 @@ case_dir = os.path.join(data_dir, 'clean_Mar_20')
 maj_dir = 'maj'
 
 # similarities output directory
-similarities_output_dir = "similarities"
+similarities_output_dir = "/home/bsg348/similarities"
 
 # Converting thermometers to vectors
 thermometer_vectors = np.zeros((len(thermometers), word2Vec_dimension))
@@ -44,6 +44,7 @@ list_of_dirs = [d for d in os.listdir(case_dir) if os.path.isdir(os.path.join(ca
 for directory in list_of_dirs:
     print(directory)
     files = os.listdir(os.path.join(case_dir, directory, maj_dir))
+    utils.createDirectory(os.path.join(similarities_output_dir, directory))
     for file_name in files:
         absolute_file_path = os.path.join(case_dir, directory, maj_dir, file_name)
         therm_param = []
