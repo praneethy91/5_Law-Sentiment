@@ -3,7 +3,12 @@ import sklearn.linear_model as linear_model
 from sklearn.model_selection import train_test_split
 import numpy as np
 
+
+demo_local = True
 home_dir="/home/bsg348/"
+
+if demo_local:
+    home_dir = "../Regression_Data"
 
 S_matrix_filename="S_matrix.pkl"
 X_matrix_filename="X_matrix.pkl"
