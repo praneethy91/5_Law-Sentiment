@@ -41,10 +41,13 @@ number_of_thermometers=40
 
 #creating the input matrices
 
-#Z_matrix represents weighted average biocharacteristic
+# Z_matrix represents weighted average biocharacteristic
 Z_matrix=np.zeros((number_of_ckt_years*number_of_thermometers,number_of_bio_characteristics))
 
-#S_matrix represents the similarity
+# Y_matrix is the outcome variable
+Y_matrix = np.zeros((number_of_ckt_years*number_of_thermometers,1))
+
+# S_matrix represents the similarity
 S_matrix=np.zeros((number_of_ckt_years*number_of_thermometers,1))
 counter=0
 
@@ -52,14 +55,19 @@ df = pd.DataFrame(columns=('circuit_thermometer','thermometer_year', 'circuit_ye
 
 dataframe_index=0
 for ckt_yr in circuit_year:
+    # generate the outcome variable vector
+
     print(ckt_yr)
     name_file_similarity=home_folder+similarity_folder+ckt_yr+".0.p"
     name_file_bio_weighted=home_folder+bio_folder+ckt_yr+"/"+bio_weighted
-    file_similarity=pkl.load(open(name_file_similarity,'rb'))
+    name_output_scores = home_folder+anes_folder+ckt_yr+"/outcome_score"
+    file_similarity = pkl.load(open(name_file_similarity,'rb'))
+    outcome_scores = pkl.load(open(name_output_scores,'rb'))
 
     file_bio_weighted=pkl.load(open(name_file_bio_weighted,'rb'))
     #print("abc",file_bio_weighted['x_phouse'])
     S_matrix[counter:counter+number_of_thermometers]=file_similarity.reshape((number_of_thermometers,1))
+    Y_matrix[counter:counter + number_of_thermometers] = outcome_scores.reshape((number_of_thermometers, 1))
 
     incr=0
     circuit_year=ckt_yr.split("_")
@@ -82,6 +90,8 @@ print("dumping Z matrix")
 pkl.dump(Z_matrix,open(home_folder+"Z_matrix.pkl","wb"))
 print("dumping S matrix")
 pkl.dump(S_matrix,open(home_folder+"S_matrix.pkl","wb"))
+print("dumping Y matrix")
+pkl.dump(Y_matrix,open(home_folder+"Y_matrix.pkl","wb"))
 
 dummies_ck=pd.get_dummies(df[['circuit_thermometer']])
 dummies_kt=pd.get_dummies(df[['thermometer_year']])
