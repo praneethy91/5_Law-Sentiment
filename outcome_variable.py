@@ -24,7 +24,13 @@ circuit_mapping={
 # unique = anes_data_inp['VCF0901A'].unique()
 # print(sorted([int(x) for x in unique if not math.isnan(x)]))
 
-ranges=np.r_[1,112:152,645,646]
+# Print the iloc of the columns of the last 4 instruments
+# print(anes_data_inp.columns.get_loc("VCF9003"))
+# print(anes_data_inp.columns.get_loc("VCF9004"))
+# print(anes_data_inp.columns.get_loc("VCF9005"))
+# print(anes_data_inp.columns.get_loc("VCF9006"))
+
+ranges=np.r_[1,112:143,144:149,645,646, 813:817]
 anes_data=anes_data_inp.iloc[:,ranges]
 anes_data=anes_data[anes_data['VCF0004']>1963]
 anes_data=anes_data[anes_data['VCF0901B']!='99']
