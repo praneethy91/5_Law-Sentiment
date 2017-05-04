@@ -119,8 +119,8 @@ def main():
         return
     else:
         # run OLS with selected instruments
-        postenet = sm.OLS(X, Z[:, enetZ]).fit(
-            cov_type='HC0')  # (cov_type='cluster',cov_kwds={'groups':(clusters)})
+        postenet = sm.OLS(X, Z[:, enetZ]).fit()  # (cov_type='cluster',cov_kwds={'groups':(clusters)})
+        print(postenet.summary())
 
         # Save the predicted endogenous regressor vector of X
         Xhat_post_enet = postenet.predict()
