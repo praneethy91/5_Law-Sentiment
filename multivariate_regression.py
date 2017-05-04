@@ -14,17 +14,29 @@ demo_local = True
 home_dir="/home/bsg348/"
 
 if demo_local:
-    home_dir = "data/Regression_Data/"
+    home_dir = "data/"
 
 S_matrix_filename="S_matrix.pkl"
-X_matrix_filename="X_matrix.pkl"
 Z_matrix_filename="Z_matrix.pkl"
+Y_matrix_filename="Y_matrix.pkl"
+
+#gamma_ck is the fixed effect dummy matrix on circuit-target
+gamma_ck_filename="gamma_ck"
+
+#gamma_kt is the fixed effect dummy matrix on target year
+gamma_kt_filename="gamma_kt"
+
+#gamma_ct is the fixed effect dummy matrix on circuit year
+gamma_ct_filename="gamma_ct"
 
 S_matrix=pickle.load(open(home_dir+S_matrix_filename,"rb"))
 Z_matrix=pickle.load(open(home_dir+Z_matrix_filename,"rb"))
-X_matrix=pickle.load(open(home_dir+X_matrix_filename,"rb"))
-input_matrix=np.column_stack((Z_matrix,X_matrix))
+Y_matrix=pickle.load(open(home_dir+Y_matrix_filename,"rb"))
+gamma_ck=pickle.load(open(home_dir+gamma_ck_filename,"rb"))
+gamma_kt=pickle.load(open(home_dir+gamma_kt_filename,"rb"))
+gamma_ct=pickle.load(open(home_dir+gamma_ct_filename,"rb"))
 
+input_matrix=np.column_stack((gamma_ck, gamma_kt, gamma_ct, Z_matrix))
 
 def checkResults(y_predict, y_test):
     #for i in range(len(y_predict)):
