@@ -36,6 +36,18 @@ gamma_ck=pickle.load(open(home_dir+gamma_ck_filename,"rb"))
 gamma_kt=pickle.load(open(home_dir+gamma_kt_filename,"rb"))
 gamma_ct=pickle.load(open(home_dir+gamma_ct_filename,"rb"))
 
+biocharacteristics_order = ['x_aba', 'x_ageon40orless', 'x_ageon40s', 'x_ageon50s',
+                            'x_ageon60s', 'x_ageon70ormore', 'x_b10s', 'x_b20s', 'x_b30s',
+                            'x_b40s', 'x_b50s', 'x_ba_public', 'x_black', 'x_catholic',
+                            'x_crossa', 'x_dem', 'x_elev', 'x_evangelical', 'x_female',
+                            'x_instate_ba', 'x_jd_public', 'x_jewish', 'x_llm_sjd', 'x_mainline',
+                            'x_nonwhite', 'x_noreligion', 'x_paag', 'x_pada', 'x_pag', 'x_pago',
+                            'x_pasatty', 'x_pausa', 'x_pbank', 'x_pcab', 'x_pcc', 'x_pccoun',
+                            'x_pda', 'x_pfedjdge', 'x_pgov', 'x_pgovt', 'x_phouse', 'x_pindreg1',
+                            'x_plawprof', 'x_plocct', 'x_pmag', 'x_pmayor', 'x_pprivate', 'x_protestant',
+                            'x_psatty', 'x_pscab', 'x_psenate', 'x_psg', 'x_psgo', 'x_pshouse',
+                            'x_pslc', 'x_psp', 'x_pssc', 'x_pssenate', 'x_pusa', 'x_republican', 'x_unity']
+
 input_matrix=np.column_stack((gamma_ck, gamma_kt, gamma_ct, Z_matrix))
 def checkResults(y_predict, y_test):
     #for i in range(len(y_predict)):
@@ -97,6 +109,7 @@ def main():
     # de-mean and standardize (optional)
     X = (X - X.mean()) / X.std()
     Z = (Z - Z.mean()) / Z.std()
+    X = X.flatten()
 
     # N is the number of datapoints
     # Q is the number of instruments
@@ -104,13 +117,15 @@ def main():
     N = X.shape[0]
     Q = Z.shape[1]
 
-    enetcv = ElasticNetCV(l1_ratio=[.01, .1, .5, .7, .9, .99, 1], n_alphas=20, n_jobs=4,
-                          selection='cyclic', max_iter=50000, tol=1e-4)
+    #configure Lasso
+    enetcv = LassoCV(n_alphas=20, n_jobs=4, selection='cyclic', max_iter=1e5, tol=1e-4)
 
-    #TODO: Do we need Fstats?
+    # #configure elasticnet
+    # enetcv = ElasticNetCV(l1_ratio=[.01, .1, .5, .7, .9, .99, 1], n_alphas=20, n_jobs=4,
+    #                       selection='cyclic', max_iter=50000, tol=1e-4)
+    #
 
-    # fit elastic net
-    X = X.flatten()
+    # fit Lasso/elastic net
     enetcv.fit(Z, X)
     Xhat_enet = enetcv.predict(Z)
 
@@ -123,8 +138,7 @@ def main():
     print("Total number of data points: {0}".format(N))
     print("Total number of instruments: {0}".format(Q))
     print("Number of instruments selected: {0}".format(numSelected))
-    print("EnetZ: ")
-    print(enetZ)
+    print("Selected biocharacteristics: " + str([biocharacteristics_order[x - 1440] for x in enetZ]))
 
     # if all zeros, None of the instruments are correlated to X
     if numSelected == 0:
@@ -145,4 +159,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
