@@ -57,7 +57,6 @@ dataframe_index=0
 for ckt_yr in circuit_year:
     # generate the outcome variable vector
 
-    print(ckt_yr)
     name_file_similarity=home_folder+similarity_folder+ckt_yr+".0.p"
     name_file_bio_weighted=home_folder+bio_folder+ckt_yr+"/"+bio_weighted
     name_output_scores = home_folder+anes_folder+ckt_yr+"/outcome_score"
@@ -67,7 +66,9 @@ for ckt_yr in circuit_year:
     file_bio_weighted=pkl.load(open(name_file_bio_weighted,'rb'))
     #print("abc",file_bio_weighted['x_phouse'])
     S_matrix[counter:counter+number_of_thermometers]=file_similarity.reshape((number_of_thermometers,1))
-    Y_matrix[counter:counter + number_of_thermometers] = outcome_scores.reshape((number_of_thermometers, 1))
+
+    outcome_scores_reshape = outcome_scores.reshape((number_of_thermometers, 1))
+    Y_matrix[counter:counter + number_of_thermometers] = outcome_scores_reshape
 
     incr=0
     circuit_year=ckt_yr.split("_")
@@ -86,6 +87,15 @@ for ckt_yr in circuit_year:
         df.loc[dataframe_index] = [circuit_number +"_"+ str(therm), str(therm)  +"_"+year_number, circuit_number +"_"+ year_number]
         dataframe_index += 1
 
+stacked_matrix = np.column_stack((Z_matrix, S_matrix, Y_matrix))
+rows_notnan = np.where(np.all(~np.isnan(stacked_matrix), axis=1))[0]
+stacked_matrix = stacked_matrix[~np.isnan(stacked_matrix).any(axis=1)]
+print(stacked_matrix[:, -1][0:200])
+
+Z_matrix = stacked_matrix[:, 0:number_of_bio_characteristics]
+S_matrix = stacked_matrix[:, -2]
+Y_matrix = stacked_matrix[:, -1]
+
 print("dumping Z matrix")
 pkl.dump(Z_matrix,open(home_folder+"Z_matrix.pkl","wb"))
 print("dumping S matrix")
@@ -94,10 +104,16 @@ print("dumping Y matrix")
 pkl.dump(Y_matrix,open(home_folder+"Y_matrix.pkl","wb"))
 
 dummies_ck=pd.get_dummies(df[['circuit_thermometer']])
+dummies_ck = dummies_ck.ix[rows_notnan]
 dummies_kt=pd.get_dummies(df[['thermometer_year']])
+dummies_kt = dummies_kt.ix[rows_notnan]
 dummies_ct=pd.get_dummies(df[['circuit_year']])
+dummies_ct = dummies_ct.ix[rows_notnan]
 
 print(Z_matrix.shape)
+print(S_matrix.shape)
+print(Y_matrix.shape)
+print("-----------------------")
 print(dummies_ck.shape)
 print(dummies_kt.shape)
 print(dummies_ct.shape)
