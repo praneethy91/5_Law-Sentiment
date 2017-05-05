@@ -48,7 +48,7 @@ biocharacteristics_order = ['x_aba', 'x_ageon40orless', 'x_ageon40s', 'x_ageon50
                             'x_psatty', 'x_pscab', 'x_psenate', 'x_psg', 'x_psgo', 'x_pshouse',
                             'x_pslc', 'x_psp', 'x_pssc', 'x_pssenate', 'x_pusa', 'x_republican', 'x_unity']
 
-input_matrix=np.column_stack((gamma_ck, gamma_kt, gamma_ct, Z_matrix))
+input_matrix=np.column_stack((gamma_ct, Z_matrix))
 def checkResults(y_predict, y_test):
     #for i in range(len(y_predict)):
     #    print(y_test[i], y_predict[i], y_predict[i] - y_test[i])
@@ -138,7 +138,7 @@ def main():
     print("Total number of data points: {0}".format(N))
     print("Total number of instruments: {0}".format(Q))
     print("Number of instruments selected: {0}".format(numSelected))
-    print("Selected biocharacteristics: " + str([biocharacteristics_order[x - 1440] for x in enetZ]))
+    print("Selected biocharacteristics: " + str([biocharacteristics_order[x - 248] for x in enetZ]))
 
     # if all zeros, None of the instruments are correlated to X
     if numSelected == 0:
