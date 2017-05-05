@@ -37,7 +37,6 @@ gamma_kt=pickle.load(open(home_dir+gamma_kt_filename,"rb"))
 gamma_ct=pickle.load(open(home_dir+gamma_ct_filename,"rb"))
 
 input_matrix=np.column_stack((gamma_ck, gamma_kt, gamma_ct, Z_matrix))
-
 def checkResults(y_predict, y_test):
     #for i in range(len(y_predict)):
     #    print(y_test[i], y_predict[i], y_predict[i] - y_test[i])
@@ -124,6 +123,8 @@ def main():
     print("Total number of data points: {0}".format(N))
     print("Total number of instruments: {0}".format(Q))
     print("Number of instruments selected: {0}".format(numSelected))
+    print("EnetZ: ")
+    print(enetZ)
 
     # if all zeros, None of the instruments are correlated to X
     if numSelected == 0:
@@ -131,7 +132,7 @@ def main():
         return
     else:
         # run OLS with selected instruments
-        postenet = sm.OLS(X, Z[:, enetZ]).fit()  # (cov_type='cluster',cov_kwds={'groups':(clusters)})
+        postenet = sm.OLS(X, Z[:, enetZ]).fit(cov_type='HC0')  # (cov_type='cluster',cov_kwds={'groups':(clusters)})
         print(postenet.summary())
 
         # Save the predicted endogenous regressor vector of X

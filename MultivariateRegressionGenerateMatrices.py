@@ -74,7 +74,7 @@ for ckt_yr in circuit_year:
     circuit_year=ckt_yr.split("_")
     circuit_number=circuit_year[0]
     year_number=circuit_year[1]
-    for bio_char in file_bio_weighted.keys():
+    for bio_char in sorted(file_bio_weighted.keys()):
         #print(bio_char)
         Z_matrix[counter:counter+number_of_thermometers,incr]=file_bio_weighted[bio_char]
         incr += 1
