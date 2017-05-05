@@ -1,3 +1,4 @@
+# Taking a lot of time to run - NEED to vectorize it.
 import os
 import pickle
 import utils
