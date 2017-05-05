@@ -1,4 +1,5 @@
 # Taking a lot of time to run - NEED to vectorize it.
+# word similarity using the wordtovec similarity method - Not using cosine similarity of word vectors.
 import os
 import pickle
 import utils
