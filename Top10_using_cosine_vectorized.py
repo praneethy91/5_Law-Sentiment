@@ -36,7 +36,6 @@ list_of_dirs = [d for d in os.listdir(case_dir) if os.path.isdir(os.path.join(ca
 for directory in list_of_dirs:
     print(directory)
     files = os.listdir(os.path.join(case_dir, directory, maj_dir))
-    utils.createDirectory(os.path.join(similarities_output_dir, directory))
     for file_name in files:
         absolute_file_path = os.path.join(case_dir, directory, maj_dir, file_name)
         therm_param = []
