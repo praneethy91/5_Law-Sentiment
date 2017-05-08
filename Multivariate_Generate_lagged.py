@@ -114,9 +114,12 @@ rows_notnan = np.where(np.all(~np.isnan(stacked_matrix), axis=1))[0]
 stacked_matrix = stacked_matrix[~np.isnan(stacked_matrix).any(axis=1)]
 #print(stacked_matrix[:, -1][0:200])
 
+print(Z_matrix.shape)
+print(S_matrix.shape)
+print(Y_matrix.shape)
+
 Z_matrix = stacked_matrix[:, 0:number_of_bio_characteristics]
 S_matrix = stacked_matrix[:, -2]
-Y_matrix = stacked_matrix[:, -1]
 
 print(Z_matrix_new.shape)
 print(S_matrix_new.shape)
@@ -128,6 +131,7 @@ stacked_matrix_new = stacked_matrix_new[~np.isnan(stacked_matrix_new).any(axis=1
 
 Z_matrix_new = stacked_matrix_new[:, 0:number_of_bio_characteristics]
 S_matrix_new = stacked_matrix_new[:, -2]
+Y_matrix = stacked_matrix[:, -1]
 #-----------
 
 
