@@ -10,32 +10,38 @@ from sklearn.linear_model import LassoCV
 from sklearn.feature_selection import SelectFromModel
 
 
-demo_local = True
-home_dir="/home/bsg348/"
+demo_local = False
+home_dir=""
 
 if demo_local:
     home_dir = "data/"
 
+number_of_biochars=237
 S_matrix_filename="S_matrix.pkl"
+S_matrix_filename_new="S_matrix_new.pkl"
+
 Z_matrix_filename="Z_matrix.pkl"
+Z_matrix_filename_new="Z_matrix_new.pkl"
 Y_matrix_filename="Y_matrix.pkl"
 
 #gamma_ck is the fixed effect dummy matrix on circuit-target
-gamma_ck_filename="gamma_ck"
+gamma_ck_filename="gamma_ck_new"
 
 #gamma_kt is the fixed effect dummy matrix on target year
-gamma_kt_filename="gamma_kt"
+gamma_kt_filename="gamma_kt_new"
 
 #gamma_ct is the fixed effect dummy matrix on circuit year
-gamma_ct_filename="gamma_ct"
+gamma_ct_filename="gamma_ct_new"
 
 S_matrix=pickle.load(open(home_dir+S_matrix_filename,"rb"))
+S_matrix_new=pickle.load(open(home_dir+S_matrix_filename_new,"rb"))
+S_matrix_new=S_matrix_new.reshape((S_matrix_new.shape[0],1))
 Z_matrix=pickle.load(open(home_dir+Z_matrix_filename,"rb"))
 Y_matrix=pickle.load(open(home_dir+Y_matrix_filename,"rb"))
 gamma_ck=pickle.load(open(home_dir+gamma_ck_filename,"rb"))
 gamma_kt=pickle.load(open(home_dir+gamma_kt_filename,"rb"))
 gamma_ct=pickle.load(open(home_dir+gamma_ct_filename,"rb"))
-
+print(gamma_ct.shape)
 biocharacteristics_order = ['x_aba', 'x_ageon40orless', 'x_ageon40s', 'x_ageon50s',
                             'x_ageon60s', 'x_ageon70ormore', 'x_b10s', 'x_b20s', 'x_b30s',
                             'x_b40s', 'x_b50s', 'x_ba_public', 'x_black', 'x_catholic',
@@ -48,7 +54,7 @@ biocharacteristics_order = ['x_aba', 'x_ageon40orless', 'x_ageon40s', 'x_ageon50
                             'x_psatty', 'x_pscab', 'x_psenate', 'x_psg', 'x_psgo', 'x_pshouse',
                             'x_pslc', 'x_psp', 'x_pssc', 'x_pssenate', 'x_pusa', 'x_republican', 'x_unity']
 
-input_matrix=np.column_stack((gamma_ct, Z_matrix))
+input_matrix=np.column_stack(( gamma_ct,S_matrix_new,Z_matrix))
 def checkResults(y_predict, y_test):
     #for i in range(len(y_predict)):
     #    print(y_test[i], y_predict[i], y_predict[i] - y_test[i])
@@ -138,7 +144,9 @@ def main():
     print("Total number of data points: {0}".format(N))
     print("Total number of instruments: {0}".format(Q))
     print("Number of instruments selected: {0}".format(numSelected))
-    print("Selected biocharacteristics: " + str([biocharacteristics_order[x - 248] for x in enetZ]))
+    print(S_matrix_new.shape)
+    #print(enetZ)
+    print("Selected biocharacteristics: " + str([biocharacteristics_order[x-238] for x in enetZ if x>239]))
 
     # if all zeros, None of the instruments are correlated to X
     if numSelected == 0:
